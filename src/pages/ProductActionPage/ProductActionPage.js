@@ -16,9 +16,6 @@ class ProductActionPage extends Component {
         var target = e.target;
         console.log("target :"+ target);
         var name = target.name;
-        var value = target.type === "number" ? parseInt(target.value) : '';
-
-        // console.log(value); 
         var value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
             [name]: value
@@ -28,12 +25,13 @@ class ProductActionPage extends Component {
     onSave = (e) => {
         e.preventDefault();
         var { txtName, txtPrice, chkbStatus } = this.state;
+        var { history } = this.props;
         callApi('products','POST',{
             name   : txtName,
             price  : txtPrice,
             status : chkbStatus 
         }).then(res => {
-            console.log(res);
+            history.goBack();
         });
     }
 
@@ -77,7 +75,7 @@ class ProductActionPage extends Component {
                             Còn Hàng
                         </label>
                     </div>
-                    <Link to="/product-list" className="btn btn-danger mr-10">
+                    <Link to="/product-list" className="btn btn-danger marRight-15">
                         Trở Lại
                     </Link>
                     <button type="submit" className="btn btn-primary">Lưu Lại</button>

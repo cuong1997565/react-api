@@ -21,6 +21,32 @@ class ProductListPage extends Component {
         });
     }
 
+    findIndex = (products, id) => {
+        var result = -1;
+        products.forEach((product, index) => {
+            if(product.id === id){
+                result = index;
+            }
+        });
+        return result;
+    }
+
+    onDelete = (id) => {
+        var { products } = this.state;
+        callApi(`products/${id}`, 'DELETE', null).then(res => {
+            if(res.status === 200) {
+                var index = this.findIndex(products,id);
+                if(index !== -1) {
+                    products.splice(index, 1);
+                    this.setState({
+                        products : products
+                    });
+                }
+            }
+
+        });
+    }
+
     showProducts(products) {
         var result = null;
         if (products.length > 0) {
@@ -30,6 +56,7 @@ class ProductListPage extends Component {
                         key={index}
                         product={product}
                         index={index}
+                        onDelete = { this.onDelete }
                     />
                 );
             });
