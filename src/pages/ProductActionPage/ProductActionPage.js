@@ -24,19 +24,45 @@ class ProductActionPage extends Component {
 
     onSave = (e) => {
         e.preventDefault();
-        var { txtName, txtPrice, chkbStatus } = this.state;
+        var { txtName, txtPrice, chkbStatus, id } = this.state;
         var { history } = this.props;
-        callApi('products','POST',{
-            name   : txtName,
-            price  : txtPrice,
-            status : chkbStatus 
-        }).then(res => {
-            history.goBack();
-        });
+        if(id) {
+           callApi(`products/${id}`,'PUT',{
+               name : txtName,
+               price : txtPrice,
+               status : chkbStatus
+           }).then(res => {
+               history.goBack();
+           })
+        } else {
+            callApi('products','POST',{
+                name   : txtName,
+                price  : txtPrice,
+                status : chkbStatus 
+            }).then(res => {
+                history.goBack();
+            });
+        }
+    }
+
+    componentDidMount() {
+        var { match } = this.props;
+        if(match) {
+            var id = match.params.id;
+            callApi(`products/${id}`,'GET',null).then(res => {
+                var data = res.data;
+                this.setState({
+                    id : data.id,
+                    txtName : data.name,
+                    txtPrice : data.price,
+                    chkbStatus : data.status
+                });
+            });
+        }
     }
 
     render() {
-        var { txtName, txtPrice, chkbStatus } = this.state;
+        var {  txtName, txtPrice, chkbStatus } = this.state;
         return (
             <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <form onSubmit={this.onSave}>

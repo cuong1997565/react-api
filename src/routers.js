@@ -22,7 +22,7 @@ const routers = [
     {
         path : '/product/:id/edit',
         export : false,
-        main: ({math}) => <ProductActionPage math={math} />
+        main: ({match, history }) => <ProductActionPage match={match} history={history} />
     },
     {
         path : '',
