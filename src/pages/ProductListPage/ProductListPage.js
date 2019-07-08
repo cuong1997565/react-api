@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import ProductList from './../../components/ProductList/ProductList';
 import ProductItem from './../../components/ProductItem/ProductItem';
 import { connect } from 'react-redux';
-import callApi from './../../utils/apiCaller';
 import { Link } from 'react-router-dom';
+import { actFetchProductsRequest, actDeleteProductRequest } from './../../actions/index';
 class ProductListPage extends Component {
     constructor(props) {
         super(props);
@@ -12,13 +12,7 @@ class ProductListPage extends Component {
         }
     }
     componentDidMount() {
-        callApi('products', 'GET', null).then(res => {
-            this.setState({
-                products: res.data
-            })
-        }).then(err => {
-            console.log(err);
-        });
+        this.props.actFetchProducts();
     }
 
     findIndex = (products, id) => {
@@ -32,19 +26,7 @@ class ProductListPage extends Component {
     }
 
     onDelete = (id) => {
-        var { products } = this.state;
-        callApi(`products/${id}`, 'DELETE', null).then(res => {
-            if(res.status === 200) {
-                var index = this.findIndex(products,id);
-                if(index !== -1) {
-                    products.splice(index, 1);
-                    this.setState({
-                        products : products
-                    });
-                }
-            }
-
-        });
+        this.props.actDeleteProduct(id);
     }
 
     showProducts(products) {
@@ -64,7 +46,7 @@ class ProductListPage extends Component {
         return result;
     }
     render() {
-        var { products } = this.state;
+        var { products } = this.props;
         return (
             <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <Link to="product/add"  className="btn btn-info mb-10">
@@ -84,4 +66,15 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, null)(ProductListPage);
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        actFetchProducts : () => {
+            dispatch(actFetchProductsRequest());
+        },
+        actDeleteProduct : (id) => {
+            dispatch(actDeleteProductRequest(id));
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductListPage);
